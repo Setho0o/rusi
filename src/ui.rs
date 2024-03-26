@@ -1,10 +1,10 @@
 use std::io;
 use std::io::{Write, stdout};
 
-use crossterm::queue;
+use crossterm::{queue, execute};
 use crossterm::style::Print;
 use crossterm::cursor::MoveTo;
-
+use crate::utils::read_songs;
 pub fn main_border(row: u16, column: u16) -> io::Result<()> {
   for c in 0..column {
     queue!(stdout(),
@@ -27,7 +27,7 @@ pub fn main_border(row: u16, column: u16) -> io::Result<()> {
   stdout().flush()?;
   Ok(())
 }
-pub fn song_box(row: u16, column: u16) -> io::Result<()> {
+pub fn box1_border(row: u16, column: u16) -> io::Result<()> {
   let offset_w = row / 45;
   let offset_l = column / 16; 
   let width = row - offset_w; 
@@ -49,3 +49,14 @@ pub fn song_box(row: u16, column: u16) -> io::Result<()> {
   stdout().flush()?;
   Ok(())
 }
+pub fn song_ui(row: u16, column: u16) {
+  
+  let offset_w = row / 45;
+  let songs: Vec<String> = read_songs();
+  for index in 0..songs.len() {
+    let i = <usize as TryInto<u16>>::try_into(index).unwrap() + 3;
+    queue!(stdout(),MoveTo(offset_w + 5, i), Print(&songs[index])).unwrap();
+  }
+  stdout().flush().unwrap();
+}
+
